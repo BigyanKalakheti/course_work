@@ -1,3 +1,8 @@
+<?php
+if(!isset($_COOKIE["admin"])) {
+  header('Location: adminlogin.php');
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,7 +20,7 @@
 }
 .hai{
     width: 100%;
-    background: linear-gradient(to top, rgba(0,0,0,0)50%, rgba(0,0,0,0)50%),url("../images/carbg2.jpg");
+    background: linear-gradient(to top, rgba(0,0,0,0)50%, rgba(0,0,0,0)50%);
     background-position: center;
     background-size: cover;
     height: 109vh;
@@ -85,7 +90,7 @@ ul li a{
    border-collapse: collapse;
     
     font-size: 0.9em;
-    min-width: 400px;
+  
     border-radius: 5px 5px 0 0;
     overflow: hidden;
     box-shadow:0 0  20px rgba(0,0,0,0.15);
@@ -130,7 +135,6 @@ ul li a{
 }
 
 
-
 .nn{
     width:100px;
     /* background: #ff7200; */
@@ -151,22 +155,23 @@ ul li a{
     font-weight: bold;
     
 }
-
-.but a{
-    text-decoration: none;
-    color: black;
-}   
 </style>
+
+
+
 <?php
+require_once('../connection.php');
 
-require_once('connection.php');
-$query="select *from users";
-$queryy=mysqli_query($con,$query);
-$num=mysqli_num_rows($queryy);
-
-
+// Retrieve feedback data using a prepared statement
+$query = "SELECT * FROM feedback";
+$stmt = $con->prepare($query);
+$stmt->execute();
+$queryy = $stmt->get_result();
+$num = mysqli_num_rows($queryy);
 ?>
-<div class="hai">
+
+
+    <div class="hai">
         <div class="navbar">
             <div class="icon">
                 <h2 class="logo">CaRs</h2>
@@ -178,42 +183,33 @@ $num=mysqli_num_rows($queryy);
                     <li><a href="admindash.php">FEEDBACKS</a></li>
                     
                     <li><a href="adminbook.php">BOOKING REQUEST</a></li>
-                  <li> <button class="nn"><a href="index.php">LOGOUT</a></button></li>
+                  <li> <button class="nn"><a href="../logout.php">LOGOUT</a></button></li>
                 </ul>
-            </div>
+            </div> 
             
           
         </div>
         <div>
-            <h1 class="header">USERS</h1>
+            <h1 class="header">FEEDBACKS</h1>
             <div>
                 <div>
                     <table class="content-table">
                 <thead>
                     <tr>
-                        <th>NAME</th> 
+                        <th>FEEDBACK_ID</th> 
                         <th>EMAIL</th>
-                        <th>LICENSE NUMBER</th>
-                        <th>PHONE NUMBER</th> 
-                        <th>GENDER</th> 
-                        <th>DELETE USERS</th>
+                        <th>COMMENT</th>
                     </tr>
                 </thead>
                 <tbody>
-                <?php
-                
-                
-                while($res=mysqli_fetch_array($queryy)){
-                
-                
+                 <?php
+                    while ($res = $queryy->fetch_assoc()) {
                 ?>
+
                 <tr  class="active-row">
-                    <td><?php echo $res['FNAME']."  ".$res['LNAME'];?></php></td>
+                    <td><?php echo $res['FED_ID'];?></php></td>
                     <td><?php echo $res['EMAIL'];?></php></td>
-                    <td><?php echo $res['LIC_NUM'];?></php></td>
-                    <td><?php echo $res['PHONE_NUMBER'];?></php></td>
-                    <td><?php echo $res['GENDER'];?></php></td>
-                    <td><button type="submit" class="but" name="approve"><a href="deleteuser.php?id=<?php echo $res['EMAIL']?>">DELETE USER</a></button></td>
+                    <td><?php echo $res['COMMENT'];?></php></td>
                 </tr>
                <?php } ?>
                 </tbody>
@@ -221,5 +217,6 @@ $num=mysqli_num_rows($queryy);
                 </div>
             </div>
         </div>
+     
 </body>
 </html>

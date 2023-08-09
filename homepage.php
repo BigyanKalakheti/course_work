@@ -24,58 +24,46 @@
 <body>
 
 
-
 <?php
 require_once('connection.php');
-    if(isset($_POST['login']))
-    {
-        $email=$_POST['email'];
-        $pass=$_POST['pass'];
-        
-        
-        if(empty($email)|| empty($pass))
-        {
-            echo '<script>alert("please fill the blanks")</script>';
+
+if (isset($_POST['login'])) {
+    $email = $_POST['email'];
+    $pass = $_POST['pass'];
+
+    if (empty($email) || empty($pass)) {
+        echo '<script>alert("Please fill in the blanks")</script>';
+    } else {
+        // Use prepared statement
+        $query = "SELECT * FROM users WHERE EMAIL = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $row = $res->fetch_assoc();
+
+        if ($row) {
+            $db_password = $row['PASSWORD'];
+            if (md5($pass) == $db_password) {
+                $cookie_name = "user";
+                $cookie_value = $email;
+                setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/");
+                header("location: cardetails.php");
+                exit();
+            } else {
+                echo '<script>alert("Enter a proper password")</script>';
+            }
+        } else {
+            echo '<script>alert("Enter a proper email")</script>';
         }
 
-        else{
-            $query="select * from users where EMAIL='$email'";
-            $res=mysqli_query($con,$query);
-            if($row=mysqli_fetch_assoc($res)){
-                $db_password = $row['PASSWORD'];
-                if(md5($pass)  == $db_password)
-                {
-                    $cookie_name = "user";
-                    $cookie_value = $email;
-                    setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/");
-                    header("location: cardetails.php");
-
-                    
-                }
-                else{
-                    echo '<script>alert("Enter a proper password")</script>';
-                }
-
-
-
-                
-
-
-
-            }
-            else{
-                echo '<script>alert("enter a proper email")</script>';
-            }
-        }
+        $stmt->close();
     }
-
-
-
-
-
-
-
+}
 ?>
+
+
+
     <div class="hai">
         <div class="navbar">
             <div class="icon">
@@ -88,7 +76,6 @@ require_once('connection.php');
                     <li><a href="#">SERVICES</a></li>
                     
                     <li><a href="contactus.html">CONTACT</a></li>
-                  <li> <button class="adminbtn"><a href="adminlogin.php">ADMIN LOGIN</a></button></li>
                 </ul>
             </div>
             
@@ -109,13 +96,6 @@ require_once('connection.php');
                 </form>
                 <p class="link">Don't have an account?<br>
                 <a href="register.php">Sign up</a> here</a></p>
-                <!-- <p class="liw">or<br>Log in with</p>
-                <div class="icon">
-                    &emsp;&emsp;&emsp;&ensp;<a href="https://www.facebook.com/"><ion-icon name="logo-facebook"></ion-icon> </a>&nbsp;&nbsp;
-                    <a href="https://www.instagram.com/"><ion-icon name="logo-instagram"></ion-icon> </a>&ensp;
-                    <a href="https://myaccount.google.com/"><ion-icon name="logo-google"></ion-icon> </a>&ensp;
-                    
-                </div> -->
             </div>
         </div>
     </div>

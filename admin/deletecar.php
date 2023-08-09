@@ -1,6 +1,11 @@
 <?php
+if(!isset($_COOKIE["admin"])) {
+  header('Location: adminlogin.php');
+}
+?>
+<?php
 
-require_once('connection.php');
+require_once('../connection.php');
 $carid=$_GET['id'];
 $sql="DELETE from cars where CAR_ID=$carid";
 $result=mysqli_query($con,$sql);

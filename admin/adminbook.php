@@ -1,3 +1,8 @@
+<?php
+if(!isset($_COOKIE["admin"])) {
+  header('Location: adminlogin.php');
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,7 +21,7 @@
 }
 .hai{
     width: 100%;
-    background: linear-gradient(to top, rgba(0,0,0,0)50%, rgba(0,0,0,0)50%),url("../images/carbg2.jpg");
+    background: linear-gradient(to top, rgba(0,0,0,0)50%, rgba(0,0,0,0)50%);
     background-position: center;
     background-size: cover;
     height: 109vh;
@@ -159,15 +164,14 @@ ul li a{
 }
 </style>
 <?php
+require_once('../connection.php');
 
-require_once('connection.php');
-$query="SELECT *from booking ORDER BY BOOK_ID DESC";    
-$queryy=mysqli_query($con,$query);
-$num=mysqli_num_rows($queryy);
-
-
+$query = "SELECT * FROM booking ORDER BY BOOK_ID DESC";
+$stmt = $con->prepare($query);
+$stmt->execute();
+$queryy = $stmt->get_result();
+$num = mysqli_num_rows($queryy);
 ?>
-
 <div class="hai">
         <div class="navbar">
             <div class="icon">
@@ -180,7 +184,7 @@ $num=mysqli_num_rows($queryy);
                     <li><a href="admindash.php">FEEDBACKS</a></li>
                     
                     <li><a href="adminbook.php">BOOKING REQUEST</a></li>
-                  <li> <button class="nn"><a href="index.php">LOGOUT</a></button></li>
+                  <li> <button class="nn"><a href="../logout.php">LOGOUT</a></button></li>
                 </ul>
             </div>
          </div>
@@ -208,11 +212,7 @@ $num=mysqli_num_rows($queryy);
                 </thead>
                 <tbody>
                 <?php
-                
-                
-                while($res=mysqli_fetch_array($queryy)){
-                
-                
+                while ($res = $queryy->fetch_assoc()) {
                 ?>
                 <tr  class="active-row">
                     

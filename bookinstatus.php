@@ -1,3 +1,8 @@
+<?php
+if(!isset($_COOKIE["user"])) {
+  header('Location: homepage.php');
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

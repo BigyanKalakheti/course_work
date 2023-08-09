@@ -1,3 +1,8 @@
+<?php
+if(!isset($_COOKIE["admin"])) {
+  header('Location: adminlogin.php');
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +19,7 @@
 
 }
 body{
-    background-image: url("../images/regs.jpg");
+    /* background-image: url("../images/regs.jpg"); */
     
     
     background-size: cover;

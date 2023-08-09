@@ -1,3 +1,8 @@
+<?php
+if(!isset($_COOKIE["admin"])) {
+  header('Location: adminlogin.php');
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,7 +20,7 @@
 }
 .hai{
     width: 100%;
-    background: linear-gradient(to top, rgba(0,0,0,0)50%, rgba(0,0,0,0)50%),url("../images/carbg2.jpg");
+    background: linear-gradient(to top, rgba(0,0,0,0)50%, rgba(0,0,0,0)50%);
     background-position: center;
     background-size: cover;
     height: 109vh;
@@ -84,15 +89,15 @@ ul li a{
 .content-table{
    border-collapse: collapse;
     
-    font-size: 1em;
+    font-size: 0.9em;
     min-width: 400px;
     border-radius: 5px 5px 0 0;
     overflow: hidden;
     box-shadow:0 0  20px rgba(0,0,0,0.15);
-    margin-left : 100px ;
+    margin-left : 350px ;
     margin-top: 25px;
-    width: 1300px;
-    height: 300px;
+    width: 800px;
+    height: 500px;
 }
 .content-table thead tr{
     background-color: orange;
@@ -125,9 +130,10 @@ ul li a{
 
 
 .header{
-    margin-top: -700px;
+    margin-top: 70px;
     margin-left: 650px;
 }
+
 
 
 .nn{
@@ -151,41 +157,22 @@ ul li a{
     
 }
 
-.add{
-    width: 200px;
-    height: 40px;
-   
-    background: #ff7200;
-    border:none;
-    font-size: 18px;
-    border-radius: 10px;
-    cursor: pointer;
-    color:#fff;
-    transition: 0.4s ease;
-    margin-left: 1200px;
-}
-
-.add a{
-    text-decoration: none;
-    color: black;
-    font-weight: bolder;
-    
-}
-
 .but a{
     text-decoration: none;
     color: black;
-}
-</style>    
+}   
+</style>
+
 <?php
+require_once('../connection.php');
 
-require_once('connection.php');
-$query="SELECT *from cars";    
-$queryy=mysqli_query($con,$query);
-$num=mysqli_num_rows($queryy);
-
-
+$query = "SELECT * FROM users";
+$stmt = $con->prepare($query);
+$stmt->execute();
+$queryy = $stmt->get_result();
+$num = mysqli_num_rows($queryy);
 ?>
+
 <div class="hai">
         <div class="navbar">
             <div class="icon">
@@ -198,65 +185,42 @@ $num=mysqli_num_rows($queryy);
                     <li><a href="admindash.php">FEEDBACKS</a></li>
                     
                     <li><a href="adminbook.php">BOOKING REQUEST</a></li>
-                  <li> <button class="nn"><a href="index.php">LOGOUT</a></button></li>
+                  <li> <button class="nn"><a href="../logout.php">LOGOUT</a></button></li>
                 </ul>
             </div>
-         </div>
-
-         </div>
+            
+          
+        </div>
         <div>
-            <h1 class="header">CARS</h1>
-            <button class="add"><a href="addcar.php">+ ADD CARS</a></button>
+            <h1 class="header">USERS</h1>
             <div>
                 <div>
                     <table class="content-table">
                 <thead>
                     <tr>
-                        
-                        <th>CAR ID</th>
-                        <th>CAR NAME</th>
-                        <th>FUEL TYPE</th>
-                        <th>CAPACITY</th>
-                        <th>PRICE</th>
-                        <th>AVAILABLE</th>
-                        <th>DELETE</th>
+                        <th>NAME</th> 
+                        <th>EMAIL</th>
+                        <th>LICENSE NUMBER</th>
+                        <th>PHONE NUMBER</th> 
+                        <th>GENDER</th> 
+                        <th>DELETE USERS</th>
                     </tr>
                 </thead>
                 <tbody>
                 <?php
-                
-                
-                while($res=mysqli_fetch_array($queryy)){
-                
-                
+                while ($res = $queryy->fetch_assoc()) {
                 ?>
                 <tr  class="active-row">
-                    
-                    <td><?php echo $res['CAR_ID'];?></php></td>
-                    <td><?php echo $res['CAR_NAME'];?></php></td>
-                    <td><?php echo $res['FUEL_TYPE'];?></php></td>
-                    <td><?php echo $res['CAPACITY'];?></php></td>
-                    <td><?php echo $res['PRICE'];?></php></td>
-                    <td><?php  
-                    if($res['AVAILABLE']=='Y')
-                    {
-                        echo 'YES';
-                    }
-                    else{
-                        echo 'NO';
-                    }
-                    
-                    
-                    
-                    
-                    ?></php></td>
-                    <td><button type="submit" class="but" name="approve"><a href="deletecar.php?id=<?php echo $res['CAR_ID']?>">DELETE CAR</a></button></td>
-    
+                    <td><?php echo $res['FNAME']."  ".$res['LNAME'];?></php></td>
+                    <td><?php echo $res['EMAIL'];?></php></td>
+                    <td><?php echo $res['LIC_NUM'];?></php></td>
+                    <td><?php echo $res['PHONE_NUMBER'];?></php></td>
+                    <td><?php echo $res['GENDER'];?></php></td>
+                    <td><button type="submit" class="but" name="approve"><a href="deleteuser.php?id=<?php echo $res['EMAIL']?>">DELETE USER</a></button></td>
                 </tr>
                <?php } ?>
                 </tbody>
                 </table>
-                
                 </div>
             </div>
         </div>

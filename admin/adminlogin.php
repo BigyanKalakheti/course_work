@@ -21,7 +21,7 @@
 
 body{
     width: 90%;
-    background-image: url("images/adminbg2.jpg");
+    background-image: url("../images/adminbg2.jpg");
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
@@ -155,7 +155,7 @@ body{
 </style>
 
 <?php
-    require_once('connection.php');
+    require_once('../connection.php');
     if(isset($_POST['adlog'])){
         $id=$_POST['adid'];
         $pass=$_POST['adpass'];
@@ -174,8 +174,9 @@ body{
                 if($pass  == $db_password)
                 {
                     
-                    // session_start();
-                    // $_SESSION['email'] = $email;
+                    $cookie_name = "admin";
+                    $cookie_value = $id;
+                    setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/");
                     echo '<script>alert("Welcome ADMINISTRATOR!");</script>';
                     header("location: admindash.php");
                     

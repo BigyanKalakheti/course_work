@@ -1,6 +1,11 @@
 <?php
+if(!isset($_COOKIE["admin"])) {
+  header('Location: adminlogin.php');
+}
+?>
+<?php
 if(isset($_POST['addcar']) ){
-    require_once('connection.php');
+    require_once('../connection.php');
    echo "<prev>";
    print_r($_FILES['image']);
    echo "</prev>";
@@ -14,7 +19,7 @@ if(isset($_POST['addcar']) ){
         $allowed_exs = array("jpg","jpeg","png","webp","svg");
         if(in_array($img_ex_lc,$allowed_exs)){
             $new_img_name=uniqid("IMG-",true).'.'.$img_ex_lc;
-            $img_upload_path='images/'.$new_img_name;
+            $img_upload_path='../images/'.$new_img_name;
             move_uploaded_file($tmp_name,$img_upload_path);
 
                 $carname=mysqli_real_escape_string($con,$_POST['carname']);

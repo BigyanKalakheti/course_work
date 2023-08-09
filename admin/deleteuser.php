@@ -1,6 +1,11 @@
 <?php
+if(!isset($_COOKIE["admin"])) {
+  header('Location: adminlogin.php');
+}
+?>
+<?php
 
-require_once('connection.php');
+require_once('../connection.php');
 $email=$_GET['id'];
 
 $sql="DELETE from users where EMAIL='$email'";

@@ -1,3 +1,8 @@
+<?php
+if(!isset($_COOKIE["user"])) {
+  header('Location: homepage.php');
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -231,56 +236,58 @@ ul li a:hover{
 </style>
 
 
-<?php 
+<?php
+require_once('connection.php');
 
-    require_once('connection.php');
-    $carid=$_GET['id'];
-    $sql="select *from cars where CAR_ID='$carid'";
-    $cname = mysqli_query($con,$sql);
-    $email = mysqli_fetch_assoc($cname);
-    
-    $value = $_COOKIE["user"];
-    $sql="select * from users where EMAIL='$value'";
-    $name = mysqli_query($con,$sql);
-    $rows=mysqli_fetch_assoc($name);
-    $uemail=$rows['EMAIL'];
-    $carprice=$email['PRICE'];
-    if(isset($_POST['book'])){
-       
-        $bplace=mysqli_real_escape_string($con,$_POST['place']);
-        $bdate=date('Y-m-d',strtotime($_POST['date']));;
-        $dur=mysqli_real_escape_string($con,$_POST['dur']);
-        $phno=mysqli_real_escape_string($con,$_POST['ph']);
-        $des=mysqli_real_escape_string($con,$_POST['des']);
-        $rdate=date('Y-m-d',strtotime($_POST['rdate']));
-         
-        if(empty($bplace)|| empty($bdate)|| empty($dur)|| empty($phno)|| empty($des)|| empty($rdate)){
-            echo '<script>alert("please fill the place")</script>';
+$carid = $_GET['id'];
 
-        }
-        else{
-            if($bdate<$rdate){
-            $price=($dur*$carprice);
-            $sql="insert into booking (CAR_ID,EMAIL,BOOK_PLACE,BOOK_DATE,DURATION,PHONE_NUMBER,DESTINATION,PRICE,RETURN_DATE) values($carid,'$uemail','$bplace','$bdate',$dur,$phno,'$des',$price,'$rdate')";
-            $result = mysqli_query($con,$sql);
-            
-            if($result){
-                
-                $_SESSION['email'] =$uemail;
+// Retrieve car details using a prepared statement
+$sql_car = "SELECT * FROM cars WHERE CAR_ID = ?";
+$stmt_car = $con->prepare($sql_car);
+$stmt_car->bind_param("i", $carid);
+$stmt_car->execute();
+$result_car = $stmt_car->get_result();
+$email = $result_car->fetch_assoc();
+
+// Retrieve user details using a prepared statement
+$value = $_COOKIE["user"];
+$sql_user = "SELECT * FROM users WHERE EMAIL = ?";
+$stmt_user = $con->prepare($sql_user);
+$stmt_user->bind_param("s", $value);
+$stmt_user->execute();
+$result_user = $stmt_user->get_result();
+$rows = $result_user->fetch_assoc();
+$uemail = $rows['EMAIL'];
+$carprice = $email['PRICE'];
+
+if (isset($_POST['book'])) {
+    $bplace = mysqli_real_escape_string($con, $_POST['place']);
+    $bdate = date('Y-m-d', strtotime($_POST['date']));
+    $dur = mysqli_real_escape_string($con, $_POST['dur']);
+    $phno = mysqli_real_escape_string($con, $_POST['ph']);
+    $des = mysqli_real_escape_string($con, $_POST['des']);
+    $rdate = date('Y-m-d', strtotime($_POST['rdate']));
+
+    if (empty($bplace) || empty($bdate) || empty($dur) || empty($phno) || empty($des) || empty($rdate)) {
+        echo '<script>alert("Please fill in all fields")</script>';
+    } else {
+        if ($bdate < $rdate) {
+            $price = ($dur * $carprice);
+            $sql_insert_booking = "INSERT INTO booking (CAR_ID, EMAIL, BOOK_PLACE, BOOK_DATE, DURATION, PHONE_NUMBER, DESTINATION, PRICE, RETURN_DATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmt_insert_booking = $con->prepare($sql_insert_booking);
+            $stmt_insert_booking->bind_param("isssdisds", $carid, $uemail, $bplace, $bdate, $dur, $phno, $des, $price, $rdate);
+            if ($stmt_insert_booking->execute()) {
                 header("Location: bookinstatus.php");
+            } else {
+                echo '<script>alert("An error occurred. Please check the connection")</script>';
             }
-            else{
-                echo '<script>alert("please check the connection")</script>';
-            }
-        }
-        else{
-            echo  '<script>alert("please enter a correct rturn date")</script>';
-        }
-    
+            $stmt_insert_booking->close();
+        } else {
+            echo '<script>alert("Please enter a correct return date")</script>';
         }
     }
-    
-    ?>
+}
+?>
 
 
 
@@ -296,7 +303,7 @@ ul li a:hover{
                         <li><a href="aboutus2.html">ABOUT</a></li>
                         <li><a href="#">DESIGN</a></li>
                         <li><a href="contactus2.html">CONTACT</a></li>
-                        <li><button class="nn"><a href="index.html">LOGOUT</a></button></li>
+                        <li><button class="nn"><a href="logout.php">LOGOUT</a></button></li>
                         <li><img src="images/profile.png" class="circle" alt="Alps"></li>
                     <li><p class="phello">HELLO! &nbsp;<a id="pname"><?php echo $rows['FNAME']." ".$rows['LNAME']?></a></p></li>
 

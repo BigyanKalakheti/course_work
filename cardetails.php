@@ -1,3 +1,8 @@
+<?php
+if(!isset($_COOKIE["user"])) {
+  header('Location: homepage.php');
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -214,19 +219,24 @@ ul li a:hover{
 
 </style>
 
-
 <?php 
     require_once('connection.php');
-    $sql = "SELECT * FROM users WHERE EMAIL = '" . $_COOKIE["user"] . "'";
-    $name = mysqli_query($con,$sql);
-    $rows=mysqli_fetch_assoc($name);
-    $sql2="select *from cars where AVAILABLE='Y'";
-    $cars= mysqli_query($con,$sql2);
-    
-    // $row=mysqli_fetch_assoc($cars);
-    
-    
-    ?>
+
+    // Retrieve user data using a prepared statement
+    $user_email = $_COOKIE["user"];
+    $sql_user = "SELECT * FROM users WHERE EMAIL = ?";
+    $stmt_user = $con->prepare($sql_user);
+    $stmt_user->bind_param("s", $user_email);
+    $stmt_user->execute();
+    $user_result = $stmt_user->get_result();
+    $rows = $user_result->fetch_assoc();
+
+    // Retrieve available cars using a prepared statement
+    $sql_cars = "SELECT * FROM cars WHERE AVAILABLE = 'Y'";
+    $stmt_cars = $con->prepare($sql_cars);
+    $stmt_cars->execute();
+    $cars_result = $stmt_cars->get_result();
+?>
 
 
 
@@ -261,12 +271,9 @@ ul li a:hover{
 
     <ul class="de">
     <?php
-        while($result= mysqli_fetch_array($cars))
-        {
-            // echo $result['CAR_ID'];
-            // echo $result['AVAILABLE'];
-            
-    ?>    
+    while ($result = mysqli_fetch_array($cars_result)) {
+        $res = $result['CAR_ID'];
+    ?>   
     
     <li>
     <form method="POST">
@@ -275,7 +282,6 @@ ul li a:hover{
             <img src="images/<?php echo $result['CAR_IMG']?>">
         </div>
         <div class="content">
-            <?php $res=$result['CAR_ID'];?>
             <h1><?php echo $result['CAR_NAME']?></h1>
             <h2>Fuel Type : <a><?php echo $result['FUEL_TYPE']?></a> </h2>
             <h2>CAPACITY : <a><?php echo $result['CAPACITY']?></a> </h2>
@@ -290,36 +296,7 @@ ul li a:hover{
    
 
 
-    
-
-
-    <!-- <li>
-        <div class="box">
-           <div class="imgBx">
-                <img src="images/lamborghini.webp">
-            </div>
-            <div class="content">
-                <h2>LAMBORGHINI</h2>
-                <p>It has a stuning look and its in good condition.</p>
-                <h1><a>₹15,000/-</a></h1>
-                <button class="button" ><a href="booking.html">BOOK NOW</a></button>
-            </div>
-        </div></li>
-        <li>
-            <div class="box">
-               <div class="imgBx">
-                    <img src="images/porsche.jpg ">
-                </div>
-                <div class="content">
-                    <h2>PORSCHE</h2>
-                    <p>It is a cheap and best car for the family trips. <br>
-                    </p>
-                    <h1><a>₹10,000/-</a></h1>
-                    <button class="button" ><a href="booking.html">BOOK NOW</a></button>
-                </div>
-            </div></li> -->
-            
-                
+           
            
     </ul>
     </div>
@@ -329,7 +306,6 @@ ul li a:hover{
     
 
  
-    
      
 </body>
 </html>

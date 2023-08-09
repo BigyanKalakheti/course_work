@@ -6,76 +6,53 @@
    <link rel="stylesheet" href="css/regs.css" type="text/css">
 </head>
 <body>
-    
+  
 <?php
-
 require_once('connection.php');
-if(isset($_POST['regs']))
-{
-    $fname=mysqli_real_escape_string($con,$_POST['fname']);
-    $lname=mysqli_real_escape_string($con,$_POST['lname']);
-    $email=mysqli_real_escape_string($con,$_POST['email']);
-    $lic=mysqli_real_escape_string($con,$_POST['lic']);
-    $ph=mysqli_real_escape_string($con,$_POST['ph']);
-   
-    $pass=mysqli_real_escape_string($con,$_POST['pass']);
-    $cpass=mysqli_real_escape_string($con,$_POST['cpass']);
-    $gender=mysqli_real_escape_string($con,$_POST['gender']);
-    $Pass=md5($pass);
-    if(empty($fname)|| empty($lname)|| empty($email)|| empty($lic)|| empty($ph)|| empty($pass) || empty($gender))
-    {
-        echo '<script>alert("please fill the place")</script>';
-    }
-    else{
-        if($pass==$cpass){
-        $sql2="SELECT *from users where EMAIL='$email'";
-        $res=mysqli_query($con,$sql2);
-        if(mysqli_num_rows($res)>0){
-            echo '<script>alert("EMAIL ALREADY EXISTS PRESS OK FOR LOGIN!!")</script>';
-            echo '<script> window.location.href = "index.php";</script>';
 
-        }
-        else{
-        $sql="insert into users (FNAME,LNAME,EMAIL,LIC_NUM,PHONE_NUMBER,PASSWORD,GENDER) values('$fname','$lname','$email','$lic',$ph,'$Pass','$gender')";
-        $result = mysqli_query($con,$sql);
-          
+if (isset($_POST['regs'])) {
+    $fname = mysqli_real_escape_string($con, $_POST['fname']);
+    $lname = mysqli_real_escape_string($con, $_POST['lname']);
+    $email = mysqli_real_escape_string($con, $_POST['email']);
+    $lic = mysqli_real_escape_string($con, $_POST['lic']);
+    $ph = mysqli_real_escape_string($con, $_POST['ph']);
+    $pass = mysqli_real_escape_string($con, $_POST['pass']);
+    $cpass = mysqli_real_escape_string($con, $_POST['cpass']);
+    $gender = mysqli_real_escape_string($con, $_POST['gender']);
+    $Pass = md5($pass);
 
-          // $to_email = $email;
-          // $subject = "NO-REPLY";
-          // $body = "THIS MAIL CONTAINS YOUR AUTHENTICATION DETAILS....\nYour Password is $pass and Your Registered email is $to_email"
-          //          ;
-          // $headers = "From: sender email";
-          
-          // if (mail($to_email, $subject, $body, $headers))
-          
-          // {
-          //     echo "Email successfully sent to $to_email...";
-          // }
-          
-          // else
- 
-          // {
-          // echo "Email sending failed!";
-          // }
-        if($result){
-            echo '<script>alert("Registration Successful Press ok to login")</script>';
-            echo '<script> window.location.href = "index.php";</script>';       
-           }
-        else{
-            echo '<script>alert("please check the connection")</script>';
-        }
-    
-        }
+    if (empty($fname) || empty($lname) || empty($email) || empty($lic) || empty($ph) || empty($pass) || empty($gender)) {
+        echo '<script>alert("Please fill in all fields")</script>';
+    } else {
+        if ($pass == $cpass) {
+            $sql_check_email = "SELECT * FROM users WHERE EMAIL = ?";
+            $stmt_check_email = $con->prepare($sql_check_email);
+            $stmt_check_email->bind_param("s", $email);
+            $stmt_check_email->execute();
+            $res_check_email = $stmt_check_email->get_result();
 
-        }
-        else{
-            echo '<script>alert("PASSWORD DID NOT MATCH")</script>';
-            echo '<script> window.location.href = "register.php";</script>';
+            if ($res_check_email->num_rows > 0) {
+                echo '<script>alert("Email already exists. Press OK to login.")</script>';
+                echo '<script>window.location.href = "index.php";</script>';
+            } else {
+                $sql_insert = "INSERT INTO users (FNAME, LNAME, EMAIL, LIC_NUM, PHONE_NUMBER, PASSWORD, GENDER) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                $stmt_insert = $con->prepare($sql_insert);
+                $stmt_insert->bind_param("ssssdss", $fname, $lname, $email, $lic, $ph, $Pass, $gender);
+                if ($stmt_insert->execute()) {
+                    echo '<script>alert("Registration Successful. Press OK to login.")</script>';
+                    echo '<script>window.location.href = "index.php";</script>';
+                } else {
+                    echo '<script>alert("An error occurred. Please check the connection.")</script>';
+                }
+                $stmt_insert->close();
+            }
+            $stmt_check_email->close();
+        } else {
+            echo '<script>alert("Passwords do not match.")</script>';
+            echo '<script>window.location.href = "register.php";</script>';
         }
     }
 }
-
-
 ?>
 
 
@@ -85,6 +62,7 @@ if(isset($_POST['regs']))
         background:  #fdcd3b;
         background-size: auto;
          background-position:unset;
+         background: linear-gradient(to top, rgba(0,0,0,0)50%, rgba(0,0,0,0)50%),url("./images/carbg5.jpg");
          /* background-repeat: ; */
       }
       input#psw{
