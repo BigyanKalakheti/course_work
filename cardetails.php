@@ -217,12 +217,7 @@ ul li a:hover{
 
 <?php 
     require_once('connection.php');
-        session_start();
-
-    $value = $_SESSION['email'];
-    $_SESSION['email'] = $value;
-    
-    $sql="select * from users where EMAIL='$value'";
+    $sql = "SELECT * FROM users WHERE EMAIL = '" . $_COOKIE["user"] . "'";
     $name = mysqli_query($con,$sql);
     $rows=mysqli_fetch_assoc($name);
     $sql2="select *from cars where AVAILABLE='Y'";
@@ -253,7 +248,7 @@ ul li a:hover{
                     
                     <li><a href="contactus2.html">CONTACT</a></li>
                     <li><a href="feedback/Feedbacks.php">FEEDBACK</a></li>
-                    <li><button class="nn"><a href="index.php">LOGOUT</a></button></li>
+                    <li><button class="nn"><a href="logout.php">LOGOUT</a></button></li>
                     <li><img src="images/profile.png" class="circle" alt="Alps"></li>
                     <li><p class="phello">HELLO! &nbsp;<a id="pname"><?php echo $rows['FNAME']." ".$rows['LNAME']?></a></p></li>
                     <li><a id="stat" href="bookinstatus.php">BOOKING STATUS</a></li>
@@ -292,25 +287,7 @@ ul li a:hover{
         }
     
     ?>
-    <?php 
-    require_once('connection.php');
-        
-
-    $value = $_SESSION['email'];
-    
-    $sql="select * from users where EMAIL='$value'";
-    $name = mysqli_query($con,$sql);
-    $rows=mysqli_fetch_assoc($name);
-    // // $sql2="select *from cars where CAR_ID=1";
-    // $cars= mysqli_query($con,"select *from cars where CAR_ID=1");
-    
-    // $row=mysqli_fetch_assoc($cars);
-    
-        
-        
-    
-    
-    ?>
+   
 
 
     

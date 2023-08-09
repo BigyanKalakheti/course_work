@@ -9,95 +9,93 @@
 <body>
 <style>
 
-*{
+* {
     margin: 0;
     padding: 0;
-
-}
-
-body{
-    background: url("images/carbg2.jpg");
-    background-position: center;
-   
-}
-.box{
-    
-    position:center;    
-    top: 50%;
-    left: 50%;
-    padding: 20px;
     box-sizing: border-box;
-    background: #fff;
-    border-radius: 4px;
-    box-shadow: 0 5px 15px rgba(0,0,0,.5);
-    background: linear-gradient(to top, rgba(255, 251, 251, 1)70%,rgba(250, 246, 246, 1)90%);
+}
+
+body {
+    background: url("images/carbg2.jpg") center/cover;
+    font-family: Arial, sans-serif;
+}
+
+ul {
     display: flex;
-    align-content: center;
-    width: 700px;
-    height: 250px;
-    margin-top: 100px;
-    margin-left: 350px;
-  
-    
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
 }
 
-
-.box .content{
-    margin-left: 5px;
-    font-size: larger;
+ul li {
+    list-style: none;
+    font-size: 20px;
+    color: #fff;
 }
 
-.box .button{
-    width: 240px;
-    height: 40px;
+.utton {
     background: #ff7200;
-    border:none;
-    margin-top: 30px;
-    font-size: 18px;
-    border-radius: 10px;
-    cursor: pointer;
-    color:#fff;
-    transition: 0.4s ease;
-}
-
-.utton{
-    width: 200px;
-    height: 40px;
-   
-    background: #ff7200;
-    border:none;
+    border: none;
     font-size: 18px;
     border-radius: 5px;
     cursor: pointer;
-    color:#fff;
+    color: #fff;
     transition: 0.4s ease;
-    margin-top: 10px;
-    margin-left: 10px;
-}
-.utton a{
+    padding: 10px 20px;
     text-decoration: none;
-    color: white;
-    font-weight: bold;
 }
 
-ul{
-    float: left;
+.utton:hover {
+    background: #e65a00;
+}
+
+.name {
+    font-weight: bold;
+    font-size: 22px;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.box {
+    margin: 50px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 80%;
     display: flex;
-    justify-content: center;
     align-items: center;
-    margin-top: 100px;
 }
 
-ul li{
-    list-style: none;
-    margin-left: 200px;
-    margin-top: -130px;
-    font-size: 35px;
+.box .imgBx {
+    width: 150px;
+    flex: 0 0 150px;
+    margin-right: 20px;
+}
 
+.box .imgBx img {
+    max-width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
 }
-.name{
-    font-weight: bold;
+
+.box .content {
+    flex: 1;
 }
+
+.box h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.box h1:last-child {
+    margin-bottom: 0;
+}
+
+
+
+
+
 
 </style>
 
@@ -106,7 +104,7 @@ ul li{
 <?php
     require_once('connection.php');
     session_start();
-    $email = $_SESSION['email'];
+    $email = $_COOKIE['user'];
 
     $sql="select * from booking where EMAIL='$email' order by BOOK_ID DESC LIMIT 1";
     $name = mysqli_query($con,$sql);
@@ -129,20 +127,21 @@ ul li{
 
 
 ?>
-   <ul><li> <button  class="utton"><a href="cardetails.php">Go to Home</a></button></li><li class="name">HELLO! <?php echo $rows2['FNAME']." ".$rows2['LNAME']?></li>
-
-
-
-
+   <ul>
+    <li><button class="utton"><a href="cardetails.php">Go to Home</a></button></li>
+    <li class="name">HELLO! <?php echo $rows2['FNAME']." ".$rows2['LNAME']?></li>
 </ul>
-    <div class="box">
-         <div class="content">
-             <h1>CAR NAME : <?php echo $rows3['CAR_NAME']?></h1><br>
-             <h1>NO OF DAYS : <?php echo $rows['DURATION']?></h1><br>
-             <h1>BOOKING STATUS : <?php echo $rows['BOOK_STATUS']?></h1><br>
-             
-         </div>
-     </div>
+
+<div class="box">
+    <div class="imgBx">
+        <img src="images/<?php echo $rows3['CAR_IMG']?>">
+    </div>
+    <div class="content">
+        <h1>CAR NAME : <?php echo $rows3['CAR_NAME']?></h1><br>
+        <h1>NO OF DAYS : <?php echo $rows['DURATION']?></h1><br>
+        <h1>BOOKING STATUS : <?php echo $rows['BOOK_STATUS']?></h1><br>
+    </div>
+</div>
 
 
 

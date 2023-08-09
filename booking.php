@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CAR BOOKING</title>
     <!-- <link  rel="stylesheet" href=""> -->
-    <script type="text/javascript">
+    <!-- <script type="text/javascript">
         function preventBack() {
             window.history.forward(); 
         }
@@ -14,7 +14,7 @@
         setTimeout("preventBack()", 0);
           
         window.onunload = function () { null };
-    </script>
+    </script> -->
 
 
 
@@ -234,15 +234,12 @@ ul li a:hover{
 <?php 
 
     require_once('connection.php');
-    session_start();
- 
     $carid=$_GET['id'];
-    
     $sql="select *from cars where CAR_ID='$carid'";
     $cname = mysqli_query($con,$sql);
     $email = mysqli_fetch_assoc($cname);
     
-    $value = $_SESSION['email'];
+    $value = $_COOKIE["user"];
     $sql="select * from users where EMAIL='$value'";
     $name = mysqli_query($con,$sql);
     $rows=mysqli_fetch_assoc($name);
