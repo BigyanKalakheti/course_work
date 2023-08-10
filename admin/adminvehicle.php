@@ -254,7 +254,7 @@ $num = mysqli_num_rows($queryy);
                     
                     
                     ?></php></td>
-                    <td><button type="submit" class="but" name="approve"><a href="deletecar.php?id=<?php echo $res['CAR_ID']?>">DELETE CAR</a></button></td>
+                    <td><button type="button" class="but" onclick="deleteCar(<?php echo $res['CAR_ID']; ?>)">DELETE CAR</button></td>
     
                 </tr>
                <?php } ?>
@@ -264,5 +264,34 @@ $num = mysqli_num_rows($queryy);
                 </div>
             </div>
         </div>
+
+
+        <script>
+    // Function to handle the delete request
+    function deleteCar(id) {
+        if (confirm("Are you sure you want to delete this car?")) {
+            // Create a new XMLHttpRequest
+            var xhr = new XMLHttpRequest();
+            
+            // Configure the request
+            xhr.open("GET", "deletecar.php?id=" + id, true);
+            
+            // Define the callback function for when the request completes
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        // Refresh the page or update the UI as needed
+                        location.reload();
+                    } else {
+                        alert("An error occurred while deleting the car.");
+                    }
+                }
+            };
+            
+            // Send the request
+            xhr.send();
+        }
+    }
+</script>
 </body>
 </html>
