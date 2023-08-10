@@ -27,19 +27,28 @@ session_start();
 $email = $_SESSION['email'];
 
 if(isset($_POST['submit'])){
-	$comment=mysqli_real_escape_string($con,$_POST['comment']);
-	$sql="insert into  feedback (EMAIL,COMMENT) values('$email','$comment')";
-	$result = mysqli_query($con,$sql);
-	echo '<script>alert("Feedback Sent Successfully!!THANK YOU!!")</script>';
-	header("Location: ../cardetails.php");
-
-	
+    $comment = $_POST['comment'];
+    
+    // Prepare the SQL statement using a prepared statement
+    $sql = "INSERT INTO feedback (EMAIL, COMMENT) VALUES (?, ?)";
+    $stmt = mysqli_prepare($con, $sql);
+    
+    // Bind parameters to the prepared statement
+    mysqli_stmt_bind_param($stmt, "ss", $email, $comment);
+    
+    // Execute the prepared statement
+    $result = mysqli_stmt_execute($stmt);
+    
+    if($result) {
+        echo '<script>alert("Feedback Sent Successfully!! THANK YOU!!")</script>';
+        header("Location: ../cardetails.php");
+        exit;
+    } else {
+        echo '<script>alert("Feedback submission failed.")</script>';
+    }
+    
+    mysqli_stmt_close($stmt);
 }
-
-
-
-
-
 ?>
 
 <button class="btn" style="
